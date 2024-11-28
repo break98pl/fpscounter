@@ -5,26 +5,12 @@
 int EntryPoint() {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    NSDictionary *settingDic = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.dongle.fpscounter.plist"];
+    // NSDictionary *settingDic = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.dongle.fpscounter.plist"];
 
     NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
-    NSString *formatedIdentifier = [NSString stringWithFormat:@"fpscounterEnabled-%@", identifier];
+    // NSString *formatedIdentifier = [NSString stringWithFormat:@"fpscounterEnabled-%@", identifier];
 
-    if ([[settingDic objectForKey:formatedIdentifier] boolValue]) {
-			[KMCGeigerCounter sharedGeigerCounter].enabled = YES;
-        // NSString *libPath = @"/usr/lib/testlib.dylib";
-        // if ([[NSFileManager defaultManager] fileExistsAtPath:libPath]) {
-        //     dlopen([libPath UTF8String], 2);
-        //     [[NSNotificationCenter defaultCenter] postNotificationName:@"IBARevealRequestStart" object:nil];
-        //     NSLog(@"fpscounter loaded %@", libPath);
-        // }
-				// else{
-				// 	NSLog(@"file not exist at %@", libPath);
-				// }
-    }
-		else {
-			//NSLog(@"fpscounter setting off");
-		}
+    if(![identifier isEqual:@"com.apple.springboard"]) [KMCGeigerCounter sharedGeigerCounter].enabled = YES;
 
     [pool drain];
 
@@ -36,10 +22,12 @@ void deEntry(){
 }
 
 %hook UIWindow
-- (void)makeKeyAndVisible{
-	%log;
-	%orig;
-	EntryPoint();
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+	static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        EntryPoint();
+    });
+	return %orig;
 }
 %end
 

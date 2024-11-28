@@ -64,18 +64,6 @@ static NSTimeInterval const kNormalFrameDuration = 1.0 / kHardwareFramesPerSecon
 {
     NSInteger drawnFrameCount = self.drawnFrameCountInLastSecond;
 
-    if (drawnFrameCount < 0) {
-        self.meterLabel.backgroundColor = [UIColor grayColor];
-    }
-    else if (drawnFrameCount > 50) {
-        self.meterLabel.backgroundColor = self.meterPerfectColor;
-    }
-    else if (drawnFrameCount > 30) {
-        self.meterLabel.backgroundColor = self.meterGoodColor;
-    }
-    else {
-        self.meterLabel.backgroundColor = self.meterBadColor;
-    }
     self.meterLabel.text = [NSString stringWithFormat:@"%ld", (long)drawnFrameCount];
 }
 
@@ -101,11 +89,14 @@ static NSTimeInterval const kNormalFrameDuration = 1.0 / kHardwareFramesPerSecon
     // between frames, then the framerate can drop without CADisplayLink detecting it.
     // Therefore, put an empty 1pt x 1pt SKView in the window. It shouldn't interfere with the framerate, but
     // should cause the CADisplayLink callbacks to match the timing of drawing.
-    SKScene *scene = [[[SKScene alloc] init] autorelease];
-    self.sceneView = [[[SKView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1.0, 1.0)] autorelease];
-    [self.sceneView presentScene:scene];
 
-    [[UIApplication sharedApplication].keyWindow addSubview:self.sceneView];
+
+    //disable prevent cráh
+    // SKScene *scene = [[[SKScene alloc] init] autorelease];
+    // self.sceneView = [[[SKView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1.0, 1.0)] autorelease];
+    // [self.sceneView presentScene:scene];
+
+    // [[UIApplication sharedApplication].keyWindow addSubview:self.sceneView];
 }
 
 - (void)stop
@@ -147,34 +138,45 @@ static NSTimeInterval const kNormalFrameDuration = 1.0 / kHardwareFramesPerSecon
 - (void)enable
 {
     self.window = [[[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].statusBarFrame] autorelease];
-    self.window.windowLevel = UIWindowLevelStatusBar + 100.0;
-    self.window.userInteractionEnabled = NO;
-    
-    UIViewController *rootViewController = [[[UIViewController alloc] init] autorelease];
-    rootViewController.view.frame = self.window.bounds;
-    self.window.rootViewController = rootViewController;
-
-    CGFloat const kMeterWidth = 65.0;
-    CGFloat xOrigin = 0.0;
-    switch (self.position) {
-        case KMCGeigerCounterPositionLeft:
-            xOrigin = 0.0;
-            break;
-        case KMCGeigerCounterPositionMiddle:
-            xOrigin = (self.window.bounds.size.width - kMeterWidth) / 2.0;
-            break;
-        case KMCGeigerCounterPositionRight:
-            xOrigin = (self.window.bounds.size.width - kMeterWidth);
-            break;
-    }
-    self.meterLabel = [[[UILabel alloc] initWithFrame:CGRectMake(xOrigin, 0.0,
-                                                                kMeterWidth, self.window.bounds.size.height)] autorelease];
-    self.meterLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    self.meterLabel.backgroundColor = [UIColor grayColor];
+    self.meterLabel= [[[UILabel alloc] initWithFrame:CGRectMake(50, 50, 50, 20)] autorelease];
+    self.meterLabel.font=[UIFont fontWithName:@"Helvetica-Bold" size:16];
+    self.meterLabel.textAlignment=NSTextAlignmentRight;
+    self.meterLabel.userInteractionEnabled=NO;
+    self.meterLabel.text = @"22";
     self.meterLabel.textColor = [UIColor whiteColor];
-    self.meterLabel.textAlignment = NSTextAlignmentCenter;
-    [self.window.rootViewController.view addSubview:self.meterLabel];
+    self.meterLabel.backgroundColor = [UIColor grayColor];
     self.window.hidden = NO;
+    
+    [[UIApplication sharedApplication].keyWindow addSubview:self.meterLabel];
+    // self.window = [[[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].statusBarFrame] autorelease];
+    // self.window.windowLevel = UIWindowLevelStatusBar + 100.0;
+    // self.window.userInteractionEnabled = NO;
+    
+    // UIViewController *rootViewController = [[[UIViewController alloc] init] autorelease];
+    // rootViewController.view.frame = self.window.bounds;
+    // self.window.rootViewController = rootViewController;
+
+    // CGFloat const kMeterWidth = 65.0;
+    // CGFloat xOrigin = 0.0;
+    // switch (self.position) {
+    //     case KMCGeigerCounterPositionLeft:
+    //         xOrigin = 0.0;
+    //         break;
+    //     case KMCGeigerCounterPositionMiddle:
+    //         xOrigin = (self.window.bounds.size.width - kMeterWidth) / 2.0;
+    //         break;
+    //     case KMCGeigerCounterPositionRight:
+    //         xOrigin = (self.window.bounds.size.width - kMeterWidth);
+    //         break;
+    // }
+    // self.meterLabel = [[[UILabel alloc] initWithFrame:CGRectMake(xOrigin, 0.0,
+    //                                                             kMeterWidth, self.window.bounds.size.height)] autorelease];
+    // self.meterLabel.font = [UIFont boldSystemFontOfSize:12.0];
+    // self.meterLabel.backgroundColor = [UIColor grayColor];
+    // self.meterLabel.textColor = [UIColor whiteColor];
+    // self.meterLabel.textAlignment = NSTextAlignmentCenter;
+    // [self.window.rootViewController.view addSubview:self.meterLabel];
+    // self.window.hidden = NO;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
