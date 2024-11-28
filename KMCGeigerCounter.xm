@@ -200,7 +200,7 @@ static NSTimeInterval const kNormalFrameDuration = 1.0 / kHardwareFramesPerSecon
 {
     self = [super init];
     if (self) {
-        self.position = KMCGeigerCounterPositionMiddle;
+        self.position = KMCGeigerCounterPositionLeft;
 
         self.meterPerfectColor = [UIColor colorWithRed:0.259 green:0.396 blue:0.000 alpha:1.000];
         self.meterGoodColor = [UIColor colorWithRed:0.396 green:0.361 blue:0.000 alpha:1.000];
