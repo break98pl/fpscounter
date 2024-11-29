@@ -6,7 +6,7 @@
 		items = (
 			{
 				cell = PSGroupCell;
-				label = "Show application FPS.";
+				label = "Disable show application FPS.";
 			},
 			{
 				bundle = AppList;
@@ -14,14 +14,14 @@
 				cell = PSLinkCell;
 				label = "Enabled Applications";
 				ALSettingsPath = "/var/mobile/Library/Preferences/com.dongle.fpscounter.plist";
-				ALSettingsKeyPrefix = "fpscounterEnabled-";
+				ALSettingsKeyPrefix = "fpscounterDisabled-";
 				"ALSettingsDefaultValue" = "";
 				"New item" = "";
 				ALAllowsSelection = 1;
 				ALSectionDescriptors = (
 					{
 						items = ();
-						"footer-title" = "Select which applications to show FPS info.";
+						"footer-title" = "Select which applications to disable show FPS info.";
 					},
 					{
 						title = "User Applications";
